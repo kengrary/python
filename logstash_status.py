@@ -13,12 +13,14 @@ def perMS(count, time_in_ms):
     return int(time_in_ms/count)
 
 for h in logstash_hosts:
+    fmt_head = '%-14s%-14s%-14s%-14s%-14s%-14s%-14s%-14s%-14s%-14s'
+    fmt_body = '%-14s%-14d%-14d%-14d%-14d%-14d%-14d%-14d%-14d%-14d'
     try:
         url = "http://" + h + ':' + logstash_port + jvm_url
         body = urllib2.urlopen(url=url, timeout=5)
         jvm_stats = json.loads(body.read())
         host = socket.gethostname() #jvm_stats['host']
-        uptime = int(jvm_stats['jvm']['uptime_in_millis'])/1000
+        uptime = int(jvm_stats['jvm']['uptime_in_millis'])/1000/60
         mem = jvm_stats['jvm']['mem']
         gc = jvm_stats['jvm']['gc']
         pools = mem['pools']
@@ -30,9 +32,7 @@ for h in logstash_hosts:
         oldGCCount = int(gc['collectors']['old']['collection_count'])
         yngGCTime = perMS(yngGCCount, int(gc['collectors']['young']['collection_time_in_millis']))
         oldGCTime = perMS(oldGCCount, int(gc['collectors']['old']['collection_time_in_millis']))
-        print '%-14s%-14s%-14s%-14s%-14s%-14s%-14s%-14s%-14s%-14s' %('host','uptime(S)','HeapUsage(MB)', 'HeapMax(MB)', 
-                                                                     'YngUsage(MB)','YngGCCount','YngGCTime(MS)','OldUsage(MB)','OldGCCount','OldGCTime(MS)')
-        print '%-14s%-14d%-14d%-14d%-14d%-14d%-14d%-14d%-14d%-14d' %(host, uptime, heapUsage, heapMax, 
-                                                                     yngUsage, yngGCCount, yngGCTime, oldUsage, oldGCCount, oldGCTime)
+        print fmt_head %('host','uptime(min)','HeapUsage(MB)', 'HeapMax(MB)', 'YngUsage(MB)','YngGCCount','YngGCTime(MS)','OldUsage(MB)','OldGCCount','OldGCTime(MS)')
+        print fmt_body %(host, uptime, heapUsage, heapMax,  yngUsage, yngGCCount, yngGCTime, oldUsage, oldGCCount, oldGCTime)      
     except Exception, e:
         print str(e)
