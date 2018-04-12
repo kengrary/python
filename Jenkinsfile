@@ -1,5 +1,10 @@
 pipeline {
-  agent any
+  agent {
+    node {
+      label 'master'
+    }
+    
+  }
   stages {
     stage('Checkout') {
       steps {
@@ -7,11 +12,17 @@ pipeline {
       }
     }
     stage('Archive') {
+      agent {
+        node {
+          label 'master'
+        }
+        
+      }
       steps {
         sh '''if [ -e python.tgz ]; then
    rm -f python.tgz
 fi
-tar --exclude=".git" --exclude="Jenkinsfile" -zcvf python.tgz ./*'''
+tar --exclude=".git" --exclude="Jenkinsfile" -zcvf python-${GIT_COMMIT:0:6}.tgz ./*'''
       }
     }
   }
