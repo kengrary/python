@@ -22,7 +22,7 @@ pipeline {
         sh '''if [ -e python.tgz ]; then
    rm -f python.tgz
 fi
-tar --exclude=".git" --exclude="Jenkinsfile" -zcvf python-(${GIT_COMMIT}).substring(0,6).tgz ./*'''
+tar --exclude=".git" --exclude="Jenkinsfile" -zcvf python-${ env.GIT_COMMIT.substring(0,6) }.tgz ./*'''
       }
     }
   }
