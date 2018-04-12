@@ -19,7 +19,7 @@ pipeline {
         
       }
       steps {
-        sh 'tar --exclude=".git" --exclude="Jenkinsfile" -zcvf python-${GIT_COMMIT:0:6}.tgz ./*'
+        sh 'tar --exclude=".git" --exclude="Jenkinsfile" -zcvf python-${GIT_COMMIT.substring(0,6)}.tgz ./*'
         archiveArtifacts '*.tgz'
       }
     }
