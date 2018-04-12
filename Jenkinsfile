@@ -19,10 +19,8 @@ pipeline {
         
       }
       steps {
-        sh '''if [ -e python.tgz ]; then
-   rm -f python.tgz
-fi
-tar --exclude=".git" --exclude="Jenkinsfile" -zcvf python-${ env.GIT_COMMIT.substring(0,6) }.tgz ./*'''
+        sh 'tar --exclude=".git" --exclude="Jenkinsfile" -zcvf python-${GIT_COMMIT:0:6}.tgz ./*'
+        archiveArtifacts '*.tgz'
       }
     }
   }
